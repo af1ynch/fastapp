@@ -296,6 +296,7 @@ typing-extensions==4.14.1
     #   typer
     #   typing-inspection
     #   uvicorn
+    #   virtualenv
 typing-inspection==0.4.1
     # via
     #   fastapi-sqlalchemy-mysql
@@ -319,7 +320,7 @@ uvloop==0.21.0 ; platform_python_implementation != 'PyPy' and sys_platform != 'c
     # via
     #   fastapi-sqlalchemy-mysql
     #   uvicorn
-virtualenv==20.33.1
+virtualenv==20.34.0
     # via
     #   fastapi-sqlalchemy-mysql
     #   pre-commit
