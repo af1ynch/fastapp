@@ -6,3 +6,5 @@ venv/
 backend/alembic/versions/
 *.log
 .ruff_cache/
+
+requirements.bak
