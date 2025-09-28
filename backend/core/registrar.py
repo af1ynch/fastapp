@@ -1,25 +1,37 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-import os.path
+import os
+
+from asyncio import create_task
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator
 
-from fastapi import FastAPI, Depends
+# import socketio
+
+from asgi_correlation_id import CorrelationIdMiddleware
+from fastapi import Depends, FastAPI
 from fastapi_limiter import FastAPILimiter
 from fastapi_pagination import add_pagination
+from starlette.middleware.authentication import AuthenticationMiddleware
 from starlette.middleware.cors import CORSMiddleware
+from starlette.staticfiles import StaticFiles
 from starlette.types import ASGIApp
 
 from backend import __version__
-from backend.app.router import route
+from backend.app.router import router
 from backend.common.exception.exception_handler import register_exception
-from backend.common.log import setup_logging, set_custom_logfile
-from backend.core.path_conf import STATIC_DIR
-from backend.database.redis import redis_client
+from backend.common.log import set_custom_logfile, setup_logging
 from backend.core.conf import settings
+from backend.core.path_conf import STATIC_DIR, UPLOAD_DIR
 from backend.database.db import create_tables
+from backend.database.redis import redis_client
+from backend.middleware.access_middleware import AccessMiddleware
+from backend.middleware.i18n_middleware import I18nMiddleware
+from backend.middleware.jwt_auth_middleware import JwtAuthMiddleware
+from backend.middleware.opera_log_middleware import OperaLogMiddleware
+from backend.middleware.state_middleware import StateMiddleware
 from backend.utils.demo_site import demo_site
-from backend.utils.health_check import http_limit_callback, ensure_unique_route_names
+from backend.utils.health_check import ensure_unique_route_names, http_limit_callback
 from backend.utils.openapi import simplify_operation_ids
 from backend.utils.serializers import MsgSpecJSONResponse
 
@@ -29,7 +41,7 @@ async def register_init(app: FastAPI) -> AsyncGenerator[None, None]:
     """
     启动初始化
 
-    :param app: FastAPI  应用实例
+    :param app: FastAPI 应用实例
     :return:
     """
     # 创建数据库表
@@ -37,6 +49,7 @@ async def register_init(app: FastAPI) -> AsyncGenerator[None, None]:
 
     # 初始化 redis
     await redis_client.open()
+
     # 初始化 limiter
     await FastAPILimiter.init(
         redis=redis_client,
@@ -44,12 +57,13 @@ async def register_init(app: FastAPI) -> AsyncGenerator[None, None]:
         http_callback=http_limit_callback,
     )
 
+    # 创建操作日志任务
+    create_task(OperaLogMiddleware.consumer())
+
     yield
 
     # 关闭 redis 连接
-    await redis_client.close()
-    # 关闭 limiter
-    await FastAPILimiter.close()
+    await redis_client.aclose()
 
 
 def register_app() -> FastAPI:
@@ -83,6 +97,7 @@ def register_app() -> FastAPI:
 
     # 注册组件
     register_logger()
+    # register_socket_app(app)
     register_static_file(app)
     register_middleware(app)
     register_router(app)
@@ -94,24 +109,24 @@ def register_app() -> FastAPI:
 
 def register_logger() -> None:
     """注册日志"""
-
     setup_logging()
     set_custom_logfile()
 
 
 def register_static_file(app: FastAPI) -> None:
     """
-    静态文件交互开发模式, 生产将自动关闭，生产必须使用 nginx 静态资源服务
+    注册静态资源服务
 
-    :param app:
+    :param app: FastAPI 应用实例
     :return:
     """
+    # 上传静态资源
+    if not os.path.exists(UPLOAD_DIR):
+        os.makedirs(UPLOAD_DIR)
+    app.mount("/static/upload", StaticFiles(directory=UPLOAD_DIR), name="upload")
+
+    # 固有静态资源
     if settings.FASTAPI_STATIC_FILES:
-        from fastapi.staticfiles import StaticFiles
-
-        if not os.path.exists(STATIC_DIR):
-            os.makedirs(STATIC_DIR)
-
         app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 
@@ -122,20 +137,40 @@ def register_middleware(app: FastAPI) -> None:
     :param app: FastAPI 应用实例
     :return:
     """
-    ...
+    # Opera log
+    app.add_middleware(OperaLogMiddleware)  # type: ignore
+
+    # State
+    app.add_middleware(StateMiddleware)  # type: ignore
+
+    # JWT auth
+    app.add_middleware(
+        AuthenticationMiddleware,  # type: ignore
+        backend=JwtAuthMiddleware(),
+        on_error=JwtAuthMiddleware.auth_exception_handler,
+    )
+
+    # I18n
+    app.add_middleware(I18nMiddleware)  # type: ignore
+
+    # Access log
+    app.add_middleware(AccessMiddleware)  # type: ignore
+
+    # Trace ID
+    app.add_middleware(CorrelationIdMiddleware, validator=False)  # type: ignore
 
 
 def register_router(app: FastAPI) -> None:
     """
     注册路由
 
-    :param app: FastAPI
+    :param app: FastAPI 应用实例
     :return:
     """
     dependencies = [Depends(demo_site)] if settings.DEMO_MODE else None
 
     # API
-    app.include_router(route, dependencies=dependencies)
+    app.include_router(router, dependencies=dependencies)
 
     # Extra
     ensure_unique_route_names(app)
@@ -150,3 +185,21 @@ def register_page(app: FastAPI) -> None:
     :return:
     """
     add_pagination(app)
+
+
+# def register_socket_app(app: FastAPI) -> None:
+#     """
+#     注册 Socket.IO 应用
+#
+#     :param app: FastAPI 应用实例
+#     :return:
+#     """
+#     from backend.common.socketio.server import sio
+#
+#     socket_app = socketio.ASGIApp(
+#         socketio_server=sio,
+#         other_asgi_app=app,
+#         # 切勿删除此配置：https://github.com/pyropy/fastapi-socketio/issues/51
+#         socketio_path="/ws/socket.io",
+#     )
+#     app.mount("/ws", socket_app)

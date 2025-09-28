@@ -130,6 +130,11 @@ class Settings(BaseSettings):
         ("GET", f"{FASTAPI_API_V1_PATH}/auth/captcha"),
     }
 
+    # IP 定位配置
+    IP_LOCATION_PARSE: Literal["online", "offline", "false"] = "offline"
+    IP_LOCATION_REDIS_PREFIX: str = "fba:ip:location"
+    IP_LOCATION_EXPIRE_SECONDS: int = 60 * 60 * 24  # 1 天
+
     # Trace ID
     TRACE_ID_REQUEST_HEADER_KEY: str = "X-Request-ID"
     TRACE_ID_LOG_LENGTH: int = 32  # UUID 长度，必须小于等于 32

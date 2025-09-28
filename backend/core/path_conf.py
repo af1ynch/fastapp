@@ -15,5 +15,8 @@ LOG_DIR = BASE_PATH / "log"
 # 静态资源目录
 STATIC_DIR = BASE_PATH / "static"
 
+# 上传文件目录
+UPLOAD_DIR = STATIC_DIR / "upload"
+
 # 国际化文件目录
 LOCALE_DIR = BASE_PATH / "locale"

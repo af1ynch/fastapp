@@ -14,6 +14,8 @@ anyio==4.10.0
     #   watchfiles
 asgi-correlation-id==4.3.4
     # via fastapi-sqlalchemy-mysql
+asgiref==3.9.2
+    # via fastapi-sqlalchemy-mysql
 async-timeout==5.0.1 ; python_full_version < '3.11.3'
     # via
     #   fastapi-sqlalchemy-mysql
@@ -128,6 +130,8 @@ idna==3.10
     #   email-validator
     #   fastapi-sqlalchemy-mysql
     #   httpx
+ip2loc==1.0.0
+    # via fastapi-sqlalchemy-mysql
 itsdangerous==2.2.0
     # via
     #   fastapi
@@ -297,6 +301,7 @@ typing-extensions==4.14.1
     # via
     #   alembic
     #   anyio
+    #   asgiref
     #   fastapi
     #   fastapi-pagination
     #   fastapi-sqlalchemy-mysql
@@ -318,12 +323,18 @@ typing-inspection==0.4.1
     #   pydantic-settings
 tzdata==2025.2
     # via fastapi-sqlalchemy-mysql
+ua-parser==1.0.1
+    # via user-agents
+ua-parser-builtins==0.18.0.post1
+    # via ua-parser
 ujson==5.10.0
     # via
     #   fastapi
     #   fastapi-sqlalchemy-mysql
 urllib3==2.5.0
     # via sentry-sdk
+user-agents==2.2.0
+    # via fastapi-sqlalchemy-mysql
 uvicorn==0.35.0
     # via
     #   fastapi

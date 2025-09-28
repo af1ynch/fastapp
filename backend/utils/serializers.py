@@ -54,7 +54,7 @@ def select_as_dict(row: R, use_alias: bool = False) -> dict[str, Any]:
             del result["_sa_instance_state"]
     else:
         result = {}
-        mapper = class_mapper(row.__class__)  # permission_type: ignore
+        mapper = class_mapper(row.__class__)  # type: ignore
         for prop in mapper.iterate_properties:
             if isinstance(prop, (ColumnProperty, SynonymProperty)):
                 key = prop.key

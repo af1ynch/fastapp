@@ -86,6 +86,9 @@ dependencies = [
     "win32-setctime==1.2.0 ; sys_platform == 'win32'",
     "mypy>=1.18.1",
     "asgi-correlation-id>=4.3.4",
+    "ip2loc>=1.0.0",
+    "user-agents>=2.2.0",
+    "asgiref>=3.9.2",
 ]
 requires-python = ">=3.10"
 readme = "README.md"
