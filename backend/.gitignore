@@ -1,0 +1,5 @@
+# Mypy reports
+.mypy_reports
+
+# Pre-commit logs
+.pre_commit/

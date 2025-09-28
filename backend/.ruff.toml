@@ -31,5 +31,5 @@ order-by-type = true
 
 [format]
 preview = true
-quote-style = "single"
+quote-style = "double"
 docstring-code-format = true

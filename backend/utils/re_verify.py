@@ -43,5 +43,5 @@ def is_phone(text: str) -> bool:
     if not text:
         return False
 
-    phone_pattern = r'^1[3-9]\d{9}$'
+    phone_pattern = r"^1[3-9]\d{9}$"
     return match_string(phone_pattern, text)

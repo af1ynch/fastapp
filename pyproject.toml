@@ -84,6 +84,8 @@ dependencies = [
     "watchfiles>=1.0.5",
     "websockets>=15.0.1",
     "win32-setctime==1.2.0 ; sys_platform == 'win32'",
+    "mypy>=1.18.1",
+    "asgi-correlation-id>=4.3.4",
 ]
 requires-python = ">=3.10"
 readme = "README.md"

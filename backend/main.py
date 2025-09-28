@@ -9,9 +9,9 @@ from backend.core.registrar import register_app
 app = register_app()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     try:
-        config = uvicorn.Config(app=f'{Path(__file__).stem}:app', reload=True)
+        config = uvicorn.Config(app=f"{Path(__file__).stem}:app", reload=True, port=8002)
         server = uvicorn.Server(config)
         server.run()
     except Exception as e:

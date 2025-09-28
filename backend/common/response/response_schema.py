@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-from typing import Any, Generic, TypeVar
+from typing import Any, Generic, TypeVar, overload
 
 from fastapi import Response
 from pydantic import BaseModel, Field
@@ -8,7 +8,7 @@ from pydantic import BaseModel, Field
 from backend.common.response.response_code import CustomResponse, CustomResponseCode
 from backend.utils.serializers import MsgSpecJSONResponse
 
-SchemaT = TypeVar('SchemaT')
+SchemaT = TypeVar("SchemaT")
 
 
 class ResponseModel(BaseModel):
@@ -17,44 +17,44 @@ class ResponseModel(BaseModel):
 
     示例::
 
-        @router.get('/test', response_model=ResponseModel)
+        @router.get("/test", response_model=ResponseModel)
         def test():
-            return ResponseModel(data={'test': 'test'})
+            return ResponseModel(data={"test": "test"})
 
 
-        @router.get('/test')
+        @router.get("/test")
         def test() -> ResponseModel:
-            return ResponseModel(data={'test': 'test'})
+            return ResponseModel(data={"test": "test"})
 
 
-        @router.get('/test')
+        @router.get("/test")
         def test() -> ResponseModel:
             res = CustomResponseCode.HTTP_200
-            return ResponseModel(code=res.code, msg=res.msg, data={'test': 'test'})
+            return ResponseModel(code=res.code, msg=res.msg, data={"test": "test"})
     """
 
-    code: int = Field(CustomResponseCode.HTTP_200.code, description='返回状态码')
-    msg: str = Field(CustomResponseCode.HTTP_200.msg, description='返回信息')
-    data: Any | None = Field(None, description='返回数据')
+    code: int = Field(CustomResponseCode.HTTP_200.code, description="返回状态码")
+    msg: str | None = Field(CustomResponseCode.HTTP_200.msg, description="返回信息")
+    data: Any | None = Field(None, description="返回数据")
 
 
 class ResponseSchemaModel(ResponseModel, Generic[SchemaT]):
     """
-    包含返回数据 schema 的通用型统一返回模型，仅适用于非分页接口
+    包含返回数据 schema 的通用型统一返回模型
 
     示例::
 
-        @router.get('/test', response_model=ResponseSchemaModel[GetApiDetail])
+        @router.get("/test", response_model=ResponseSchemaModel[GetApiDetail])
         def test():
             return ResponseSchemaModel[GetApiDetail](data=GetApiDetail(...))
 
 
-        @router.get('/test')
+        @router.get("/test")
         def test() -> ResponseSchemaModel[GetApiDetail]:
             return ResponseSchemaModel[GetApiDetail](data=GetApiDetail(...))
 
 
-        @router.get('/test')
+        @router.get("/test")
         def test() -> ResponseSchemaModel[GetApiDetail]:
             res = CustomResponseCode.HTTP_200
             return ResponseSchemaModel[GetApiDetail](code=res.code, msg=res.msg, data=GetApiDetail(...))
@@ -68,7 +68,9 @@ class ResponseBase:
 
     @staticmethod
     def __response(
-        *, res: CustomResponseCode | CustomResponse = None, data: Any | None = None
+        *,
+        res: CustomResponseCode | CustomResponse,
+        data: Any | None,
     ) -> ResponseModel | ResponseSchemaModel:
         """
         请求返回通用方法
@@ -77,7 +79,22 @@ class ResponseBase:
         :param data: 返回数据
         :return:
         """
-        return ResponseModel(code=res.code, msg=res.msg, data=data)
+        if data is None:
+            return ResponseModel(code=res.code, msg=res.msg, data=data)
+        return ResponseSchemaModel(code=res.code, msg=res.msg, data=data)
+
+    @overload
+    def success(
+        self, *, res: CustomResponseCode | CustomResponse = CustomResponseCode.HTTP_200, data: SchemaT
+    ) -> ResponseSchemaModel[SchemaT]: ...
+
+    @overload
+    def success(
+        self,
+        *,
+        res: CustomResponseCode | CustomResponse = CustomResponseCode.HTTP_200,
+        data: None = None,
+    ) -> ResponseModel: ...
 
     def success(
         self,
@@ -126,7 +143,7 @@ class ResponseBase:
         :param data: 返回数据
         :return:
         """
-        return MsgSpecJSONResponse({'code': res.code, 'msg': res.msg, 'data': data})
+        return MsgSpecJSONResponse({"code": res.code, "msg": res.msg, "data": data})
 
 
 response_base: ResponseBase = ResponseBase()

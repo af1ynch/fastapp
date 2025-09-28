@@ -12,6 +12,8 @@ anyio==4.10.0
     #   httpx
     #   starlette
     #   watchfiles
+asgi-correlation-id==4.3.4
+    # via fastapi-sqlalchemy-mysql
 async-timeout==5.0.1 ; python_full_version < '3.11.3'
     # via
     #   fastapi-sqlalchemy-mysql
@@ -155,6 +157,10 @@ mdurl==0.1.2
     #   markdown-it-py
 msgspec==0.19.0
     # via fastapi-sqlalchemy-mysql
+mypy==1.18.1
+    # via fastapi-sqlalchemy-mysql
+mypy-extensions==1.1.0
+    # via mypy
 nodeenv==1.9.1
     # via
     #   fastapi-sqlalchemy-mysql
@@ -163,8 +169,12 @@ orjson==3.11.2
     # via
     #   fastapi
     #   fastapi-sqlalchemy-mysql
+packaging==25.0
+    # via asgi-correlation-id
 path==17.1.1
     # via fastapi-sqlalchemy-mysql
+pathspec==0.12.1
+    # via mypy
 pillow==11.3.0
     # via
     #   fast-captcha
@@ -271,10 +281,13 @@ sqlalchemy-crud-plus==1.10.0
     # via fastapi-sqlalchemy-mysql
 starlette==0.47.2
     # via
+    #   asgi-correlation-id
     #   fastapi
     #   fastapi-sqlalchemy-mysql
 tomli==2.2.1 ; python_full_version < '3.11'
-    # via alembic
+    # via
+    #   alembic
+    #   mypy
 typer==0.16.0
     # via
     #   fastapi-cli
@@ -287,6 +300,7 @@ typing-extensions==4.14.1
     #   fastapi
     #   fastapi-pagination
     #   fastapi-sqlalchemy-mysql
+    #   mypy
     #   pydantic
     #   pydantic-core
     #   pydantic-extra-types
