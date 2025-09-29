@@ -4,10 +4,20 @@
 # Pre-commit logs
 .pre_commit/
 
-
+# Python cache
 __pycache__/
+
+# Environment variables
 .env
+
+# Alembic migrations
 alembic/versions/
+
+# Static media files
 static/media/
+
+# Log files
 *.log
+
+# Celery beat schedule
 celerybeat-schedule.*

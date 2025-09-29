@@ -1,9 +1,26 @@
-__pycache__/
+# IDE config files
 .idea/
+.vscode/
+.cursor/
+.trae/
+
+# System files
+.DS_Store
+
+# Virtual environment directories
 backend/.env
 .venv/
 venv/
-*.log
-.ruff_cache/
 
+# Ruff
+.ruff_cache/
+ruff.log
+
+# Pytest cache
+.pytest_cache/
+
+# Python version file
+.python-version
+
+# Requirements backup file
 requirements.bak
