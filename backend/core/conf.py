@@ -122,6 +122,13 @@ class Settings(BaseSettings):
     DATETIME_TIMEZONE: str = "Asia/Shanghai"
     DATETIME_FORMAT: str = "%Y-%m-%d %H:%M:%S"
 
+    # 文件上传
+    UPLOAD_READ_SIZE: int = 1024
+    UPLOAD_IMAGE_EXT_INCLUDE: list[str] = ["jpg", "jpeg", "png", "gif", "webp"]
+    UPLOAD_IMAGE_SIZE_MAX: int = 5 * 1024 * 1024  # 5 MB
+    UPLOAD_VIDEO_EXT_INCLUDE: list[str] = ["mp4", "mov", "avi", "flv"]
+    UPLOAD_VIDEO_SIZE_MAX: int = 20 * 1024 * 1024  # 20 MB
+
     # 演示模式配置
     DEMO_MODE: bool = False
     DEMO_MODE_EXCLUDE: set[tuple[str, str]] = {
