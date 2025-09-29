@@ -90,6 +90,7 @@ dependencies = [
     "user-agents>=2.2.0",
     "asgiref>=3.9.2",
     "psutil>=7.1.0",
+    "aiofiles>=24.1.0",
 ]
 requires-python = ">=3.10"
 readme = "README.md"
