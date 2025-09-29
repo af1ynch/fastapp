@@ -1,9 +1,9 @@
 [project]
-name = "fastapi_sqlalchemy_mysql"
+name = "fastapp"
 version = "0.0.1"
-description = "fastapi sqlalcehmy with mysql"
+description = "A FastAPI project template with SQLAlchemy and MySQL, including user authentication, authorization, and role-based access control."
 authors = [
-    {name = "Wu Clan", email = "jianhengwu0407@gmail.com"},
+    {name = "Wagner", email = "im.wagnerchou@gmail.com"},
 ]
 dependencies = [
     "alembic>=1.13.1",

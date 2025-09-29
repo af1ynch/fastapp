@@ -473,7 +473,7 @@ wheels = [
 ]
 
 [[package]]
-name = "fastapi-sqlalchemy-mysql"
+name = "fastapp"
 version = "0.0.1"
 source = { virtual = "." }
 dependencies = [
