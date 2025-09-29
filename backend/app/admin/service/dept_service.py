@@ -1,12 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-from typing import Any
 
 from fastapi import Request
 
 from backend.app.admin.crud.crud_dept import dept_dao
-from backend.app.admin.model import Dept
-from backend.app.admin.schema.dept import CreateDeptParam, UpdateDeptParam
+from backend.app.admin.schema.dept import CreateDeptParam, GetDeptDetail, GetDeptTree, UpdateDeptParam
 from backend.common.exception import errors
 from backend.core.conf import settings
 from backend.database.db import async_db_session
@@ -18,7 +16,7 @@ class DeptService:
     """部门服务类"""
 
     @staticmethod
-    async def get(*, pk: int) -> Dept:
+    async def get(*, pk: int) -> GetDeptDetail:
         """
         获取部门详情
 
@@ -29,12 +27,12 @@ class DeptService:
             dept = await dept_dao.get(db, pk)
             if not dept:
                 raise errors.NotFoundError(msg="部门不存在")
-            return dept
+            return GetDeptDetail.model_validate(dept)
 
     @staticmethod
     async def get_tree(
         *, request: Request, name: str | None, leader: str | None, phone: str | None, status: int | None
-    ) -> list[dict[str, Any]]:
+    ) -> list[GetDeptTree]:
         """
         获取部门树形结构
 
@@ -48,7 +46,7 @@ class DeptService:
         async with async_db_session() as db:
             dept_select = await dept_dao.get_all(request, db, name, leader, phone, status)
             tree_data = get_tree_data(dept_select)
-            return tree_data
+            return [GetDeptTree.model_validate(item) for item in tree_data]
 
     @staticmethod
     async def create(*, obj: CreateDeptParam) -> None:
