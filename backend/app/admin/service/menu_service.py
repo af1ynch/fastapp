@@ -5,8 +5,7 @@ from typing import Any
 from fastapi import Request
 
 from backend.app.admin.crud.crud_menu import menu_dao
-from backend.app.admin.model import Menu
-from backend.app.admin.schema.menu import CreateMenuParam, UpdateMenuParam
+from backend.app.admin.schema.menu import CreateMenuParam, GetMenuDetail, GetMenuTree, UpdateMenuParam
 from backend.common.exception import errors
 from backend.core.conf import settings
 from backend.database.db import async_db_session
@@ -18,7 +17,7 @@ class MenuService:
     """菜单服务类"""
 
     @staticmethod
-    async def get(*, pk: int) -> Menu:
+    async def get(*, pk: int) -> GetMenuDetail:
         """
         获取菜单详情
 
@@ -29,10 +28,10 @@ class MenuService:
             menu = await menu_dao.get(db, menu_id=pk)
             if not menu:
                 raise errors.NotFoundError(msg="菜单不存在")
-            return menu
+            return GetMenuDetail.model_validate(menu)
 
     @staticmethod
-    async def get_tree(*, title: str | None, status: int | None) -> list[dict[str, Any]]:
+    async def get_tree(*, title: str | None, status: int | None) -> list[GetMenuTree]:
         """
         获取菜单树形结构
 
@@ -43,7 +42,7 @@ class MenuService:
         async with async_db_session() as db:
             menu_data = await menu_dao.get_all(db, title=title, status=status)
             menu_tree = get_tree_data(menu_data)
-            return menu_tree
+            return [GetMenuTree.model_validate(item) for item in menu_tree]
 
     @staticmethod
     async def get_sidebar(*, request: Request) -> list[dict[str, Any]]:
