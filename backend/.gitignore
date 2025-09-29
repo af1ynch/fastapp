@@ -3,3 +3,11 @@
 
 # Pre-commit logs
 .pre_commit/
+
+
+__pycache__/
+.env
+alembic/versions/
+static/media/
+*.log
+celerybeat-schedule.*

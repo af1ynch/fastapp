@@ -3,7 +3,6 @@ __pycache__/
 backend/.env
 .venv/
 venv/
-backend/alembic/versions/
 *.log
 .ruff_cache/
 
