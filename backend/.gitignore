@@ -13,8 +13,10 @@ __pycache__/
 # Alembic migrations
 alembic/versions/
 
-# Static media files
+# Static files
 static/media/
+static/image/
+static/upload/
 
 # Log files
 *.log
